@@ -1,23 +1,24 @@
 import serial
 import time
 import keyboard
+import argparse
 
 # IMPORTANT: Replace 'COM3' with the correct port for your micro:bit.
 # - Windows: 'COMx' (e.g., 'COM3')
 # - macOS: '/dev/cu.usbmodemxxxxx'
 # - Linux: '/dev/ttyACMx'
-MICROBIT_PORT = 'COM3' 
+DEFAULT_MICROBIT_PORT = 'COM3'
 BAUD_RATE = 115200
 
-def run_keyboard_simulation():
+def run_keyboard_simulation(port: str):
     """
     Connects to the micro:bit and simulates key presses based on button input.
     """
-    print("Attempting to connect to micro:bit...")
+    print(f"Attempting to connect to micro:bit on port {port}...")
     try:
         # Establish a serial connection with the micro:bit
-        ser = serial.Serial(MICROBIT_PORT, BAUD_RATE, timeout=1)
-        print(f"Successfully connected to micro:bit on {MICROBIT_PORT}")
+        ser = serial.Serial(port, BAUD_RATE, timeout=1)
+        print(f"Successfully connected to micro:bit on {port}")
         print("Press button A on the micro:bit for 'Enter'")
         print("Press button B on the micro:bit for 'Backspace'")
         print("Press Ctrl+C in this terminal to quit.")
@@ -38,15 +39,22 @@ def run_keyboard_simulation():
                     keyboard.press_and_release('backspace')
 
     except serial.SerialException:
-        print(f"Error: Could not find the micro:bit on port {MICROBIT_PORT}.")
+        print(f"Error: Could not find the micro:bit on port {port}.")
         print("Please check the port name and ensure the micro:bit is connected.")
+    except KeyboardInterrupt:
+        print("\nInterrupted by user (Ctrl+C). Exiting...")
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
     finally:
         print("Program terminated.")
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="micro:bit remote keyboard bridge")
+    parser.add_argument("--port", "-p", default=DEFAULT_MICROBIT_PORT,
+                        help=f"Serial port for micro:bit (default: {DEFAULT_MICROBIT_PORT})")
+    args = parser.parse_args()
+
     # A small delay to give you time to switch to another window
     print("Starting in 3 seconds...")
     time.sleep(3)
-    run_keyboard_simulation()
+    run_keyboard_simulation(args.port)
