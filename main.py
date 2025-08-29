@@ -55,6 +55,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # A small delay to give you time to switch to another window
-    print("Starting in 3 seconds...")
-    time.sleep(3)
+    print("Starting in 1 seconds...")
+    time.sleep(1)
     run_keyboard_simulation(args.port)
