@@ -1,17 +1,15 @@
 microRemote
 ===========
 
-Simple Python tool that listens to a BBC micro:bit over a serial connection and simulates keyboard key presses on your computer:
+Simple Python tool that listens to a BBC micro:bit over a serial connection.
+There are different files for different use cases. The main functionality is that one Micro:bit sends either "A" or "B" over serial. This is usually initiated by a different Micro:bit that sends a message over radio, to the Micro:bit connected to the computer. 
 
-Button mappings:
 
-- A -> Enter
-- B -> Backspace
 
 Requirements
 ------------
 - Python 3.11+
-- micro:bit flashed with a program that prints either `A` or `B` over serial when buttons are pressed.
+- micro:bit flashed with a program that prints either `A` or `B` over serial when buttons are pressed (or a different event).
 
 Install dependencies (project uses uv / PEP 621):
 
@@ -34,11 +32,6 @@ Specify a different serial port:
 uv run main.py --port COM6
 ```
 
-or short form:
-
-```
-uv run main.py -p /dev/cu.usbmodem1101
-```
 
 Press Ctrl+C to exit.
 
