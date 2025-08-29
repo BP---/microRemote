@@ -31,12 +31,22 @@ def run_keyboard_simulation(port: str):
                 print(f"Received from micro:bit: '{line}'") # Optional: for debugging
                 
                 if line == "A":
-                    print("Simulating 'Enter' key press...")
-                    keyboard.press_and_release('enter')
+                    print("swapping...")
+                    keyboard.press_and_release('k')
+
+                    keyboard.press_and_release('ctrl+tab')
+                    keyboard.press_and_release('win+d')
                 
                 elif line == "B":
-                    print("Simulating 'Backspace' key press...")
-                    keyboard.press_and_release('backspace')
+                    print("going back...")
+
+                    keyboard.press_and_release('alt+tab')
+                    time.sleep(0.2)
+                    keyboard.press_and_release('ctrl+shift+tab')
+                    keyboard.press_and_release('k')
+
+                    
+                    
 
     except serial.SerialException:
         print(f"Error: Could not find the micro:bit on port {port}.")

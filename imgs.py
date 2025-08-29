@@ -2,6 +2,11 @@ import serial
 import time
 import keyboard
 import argparse
+import cv2
+import threading
+import random
+import os
+
 
 # IMPORTANT: Replace 'COM3' with the correct port for your micro:bit.
 # - Windows: 'COMx' (e.g., 'COM3')
@@ -9,6 +14,27 @@ import argparse
 # - Linux: '/dev/ttyACMx'
 DEFAULT_MICROBIT_PORT = 'COM3'
 BAUD_RATE = 115200
+
+def show_image_temporarily(image_path, duration=3):
+    img = cv2.imread(image_path)
+    cv2.imshow('Temporary Image', img)
+    cv2.waitKey(duration * 1000)  # Convert to milliseconds
+    cv2.destroyAllWindows()
+
+def get_random_image_from_folder(folder_path):
+    # List all files in the given folder
+    files = os.listdir(folder_path)
+    # Filter for common image extensions (you can add more if needed)
+    image_files = [f for f in files if f.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.bmp'))]
+
+    if not image_files:
+        print(f"No image files found in {folder_path}")
+        return None
+    
+    # Pick a random image file
+    random_image_name = random.choice(image_files)
+    # Return the full path to the random image
+    return os.path.join(folder_path, random_image_name)
 
 def run_keyboard_simulation(port: str):
     """
@@ -19,8 +45,8 @@ def run_keyboard_simulation(port: str):
         # Establish a serial connection with the micro:bit
         ser = serial.Serial(port, BAUD_RATE, timeout=1)
         print(f"Successfully connected to micro:bit on {port}")
-        print("Press button A on the micro:bit for 'Enter'")
-        print("Press button B on the micro:bit for 'Backspace'")
+        print("Press button A on the micro:bit for to show a random image from the 'imgs' folder on screen")
+        #print("Press button B on the micro:bit for 'Backspace'")
         print("Press Ctrl+C in this terminal to quit.")
 
         while True:
@@ -31,12 +57,19 @@ def run_keyboard_simulation(port: str):
                 print(f"Received from micro:bit: '{line}'") # Optional: for debugging
                 
                 if line == "A":
-                    print("Simulating 'Enter' key press...")
-                    keyboard.press_and_release('enter')
-                
+                    print("Showing random image...")
+                    # Specify your image folder here
+                    image_folder = "imgs" 
+                    random_image_path = get_random_image_from_folder(image_folder)
+                    if random_image_path:
+                        show_image_temporarily(random_image_path)
                 elif line == "B":
-                    print("Simulating 'Backspace' key press...")
-                    keyboard.press_and_release('backspace')
+                    print("temp...")
+
+                    
+
+                    
+                    
 
     except serial.SerialException:
         print(f"Error: Could not find the micro:bit on port {port}.")
@@ -57,4 +90,7 @@ if __name__ == "__main__":
     # A small delay to give you time to switch to another window
     print("Starting in 1 seconds...")
     time.sleep(1)
+
     run_keyboard_simulation(args.port)
+    
+
